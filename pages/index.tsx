@@ -103,7 +103,7 @@ export default function Home() {
         className="flex items-center justify-center w-screen h-screen"
       >
         {!showAnswer && (
-          <div className="flex flex-col gap-4">
+          <div key={0} className="flex flex-col gap-4">
             <div className="shadow-lg rounded-lg p-8 text-4xl bg-white">
               #
               <input
@@ -125,7 +125,10 @@ export default function Home() {
         )}
         {showAnswer && (
           <>
-            <div className="bg-white p-8 shadow-lg rounded-lg flex flex-col gap-4">
+            <div
+              key={1}
+              className="bg-white p-8 shadow-lg rounded-lg flex flex-col gap-4"
+            >
               <div
                 className={`p-4 rounded-full shadow-lg ${
                   shouldTextBeBlack(guess) ? "text-black" : "text-white"
