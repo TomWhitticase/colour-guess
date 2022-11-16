@@ -1,27 +1,23 @@
-import { useMemo, useState } from "react";
+import { AnyRecordWithTtl } from "dns";
+import { HTMLAttributes, useEffect, useMemo, useState } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import Background from "./components/Background";
+import Message from "./components/Message";
 
 function shouldTextBeBlack(backgroundcolor: string): boolean {
   function computeLuminence(backgroundcolor: string): number {
     let colors = hexToRgb(backgroundcolor);
-
     let components = ["r", "g", "b"];
     for (let i in components) {
       let c = components[i];
-
       colors[c] = colors[c] / 255.0;
-
       if (colors[c] <= 0.03928) {
         colors[c] = colors[c] / 12.92;
       } else {
         colors[c] = Math.pow((colors[c] + 0.055) / 1.055, 2.4);
       }
     }
-
     let luminence = 0.2126 * colors.r + 0.7152 * colors.g + 0.0722 * colors.b;
-
     return luminence;
   }
   function hexToRgb(hex: string): any {
@@ -34,7 +30,6 @@ function shouldTextBeBlack(backgroundcolor: string): boolean {
         }
       : null;
   }
-
   return computeLuminence(backgroundcolor) > 0.179;
 }
 
@@ -43,52 +38,147 @@ function getRandomColor(): string {
 }
 
 function getColorAccuracy(color1: string, color2: string): number {
-  let cwith2 = color1;
-  let ccolor2 = color2;
+  const hexToDec = (hex: string) => parseInt(hex, 16);
 
-  if (!cwith2 && !ccolor2) return 0;
+  const rgb1 = [
+    hexToDec(color1.substring(1, 3)),
+    hexToDec(color1.substring(3, 5)),
+    hexToDec(color1.substring(5, 7)),
+  ];
+  const rgb2 = [
+    hexToDec(color2.substring(1, 3)),
+    hexToDec(color2.substring(3, 5)),
+    hexToDec(color2.substring(5, 7)),
+  ];
 
-  let _cwith2 = cwith2.charAt(0) == "#" ? cwith2.substring(1, 7) : cwith2;
-  let _ccolor2 = ccolor2.charAt(0) == "#" ? ccolor2.substring(1, 7) : ccolor2;
+  const differences = [
+    1 - Math.abs(rgb1[0] - rgb2[0]) / 255,
+    1 - Math.abs(rgb1[1] - rgb2[1]) / 255,
+    1 - Math.abs(rgb1[2] - rgb2[2]) / 255,
+  ];
 
-  let _r = parseInt(_cwith2.substring(0, 2), 16);
-  let _g = parseInt(_cwith2.substring(2, 4), 16);
-  let _b = parseInt(_cwith2.substring(4, 6), 16);
+  const accuracy = (differences[0] + differences[1] + differences[2]) / 3;
 
-  let __r = parseInt(_ccolor2.substring(0, 2), 16);
-  let __g = parseInt(_ccolor2.substring(2, 4), 16);
-  let __b = parseInt(_ccolor2.substring(4, 6), 16);
-
-  let p1 = (_r / 255) * 100;
-  let p2 = (_g / 255) * 100;
-  let p3 = (_b / 255) * 100;
-
-  let perc1 = Math.round((p1 + p2 + p3) / 3);
-
-  p1 = (__r / 255) * 100;
-  p2 = (__g / 255) * 100;
-  p3 = (__b / 255) * 100;
-
-  let perc2 = Math.round((p1 + p2 + p3) / 3);
-
-  let result = 100 - Math.abs(perc1 - perc2);
-  return result;
+  return Math.round(accuracy * 100);
 }
 
-const randomColor = getRandomColor();
+function getAccuracyCircleColor(accuracy: number): string {
+  if (accuracy > 90) return "limegreen";
+  if (accuracy > 70) return "orange";
+  return "red";
+}
+
+function checkInput(
+  guess: string,
+  setMessages: React.Dispatch<React.SetStateAction<JSX.Element[]>>,
+  messages: JSX.Element[]
+): boolean {
+  const reg = /^#[0-9A-F]{6}$/i;
+  if (reg.test(guess)) {
+    return true;
+  }
+  alert("Input a valid hex code");
+  // let newMessages: JSX.Element[] = messages;
+  // newMessages.push(<Message key={Math.random()} message={"input error"} />);
+  // setMessages(newMessages);
+  return false;
+}
+
 export default function Home() {
-  const [guessColor, setGuessColor] = useState("#000000");
-  const [targetColor, setTargetColor] = useState(randomColor);
-  const [guessResult, setGuessResult] = useState(false);
-  console.log("target is " + targetColor);
+  const [elements, setElements] = useState([<div></div>]);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [guess, setGuess] = useState("");
+  const [messages, setMessages] = useState([]);
+
+  const [color, setColor] = useState("");
+  useEffect(() => {
+    setColor(getRandomColor());
+  }, []);
+
+  function showResult() {
+    console.log("test");
+    setShowAnswer(true);
+  }
 
   return (
-    <>
-      <Background targetColor={targetColor} />
-      <Background targetColor={targetColor} />
-      <Background targetColor={targetColor} />
-      <Background targetColor={targetColor} />
-    </>
+    <div>
+      {messages}
+
+      <div
+        style={{ background: color }}
+        className="flex items-center justify-center w-screen h-screen"
+      >
+        {!showAnswer && (
+          <div className="flex flex-col gap-4">
+            <div className="shadow-lg rounded-lg p-8 text-4xl bg-white">
+              #
+              <input
+                size={6}
+                onChange={(e) => {
+                  setGuess("#" + e.target.value);
+                }}
+              ></input>
+            </div>
+            <button
+              className="bg-black rounded-lg text-lg text-white p-4"
+              onClick={() => {
+                if (checkInput(guess, messages, setMessages))
+                  setShowAnswer(true);
+              }}
+            >
+              Guess
+            </button>
+          </div>
+        )}
+        {showAnswer && (
+          <>
+            <div className="bg-white p-8 shadow-lg rounded-lg flex flex-col gap-4">
+              <div
+                className={`p-4 rounded-full shadow-lg ${
+                  shouldTextBeBlack(guess) ? "text-black" : "text-white"
+                }`}
+                style={{
+                  backgroundColor: guess,
+                }}
+              >
+                Guess {guess}
+              </div>
+              <div
+                className={`p-4 rounded-full shadow-lg ${
+                  shouldTextBeBlack(color) ? "text-black" : "text-white"
+                }`}
+                style={{
+                  backgroundColor: color,
+                }}
+              >
+                Answer {color}
+              </div>
+              <div className="flex gap-2 justify-center items-center text-lg">
+                Accuracy
+                <CircularProgressbar
+                  className="w-16 h-16"
+                  value={getColorAccuracy(guess, color)}
+                  text={`${getColorAccuracy(guess, color)}%`}
+                  styles={buildStyles({
+                    pathColor: getAccuracyCircleColor(
+                      getColorAccuracy(guess, color)
+                    ),
+                    textColor: "black",
+                    textSize: "2rem",
+                  })}
+                />
+              </div>
+              <button
+                className="bg-black rounded-lg text-lg text-white p-4"
+                onClick={() => location.reload()}
+              >
+                Play again
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
