@@ -5,7 +5,6 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ProgressProvider from "./components/ProgressProvider";
 
 const inputError = () =>
   toast.error("Enter a valid hex code!", {
@@ -125,6 +124,7 @@ export default function Home() {
                 #
                 <input
                   size={6}
+                  maxLength={6}
                   onChange={(e) => {
                     setGuess("#" + e.target.value);
                   }}
@@ -177,38 +177,18 @@ export default function Home() {
                 </div>
                 <div className="flex gap-2 justify-center items-center text-lg">
                   Accuracy
-                  <ProgressProvider
-                    valueStart={10}
-                    valueEnd={getColorAccuracy(guess, color)}
-                  >
-                    {(value: number) => (
-                      <CircularProgressbar
-                        className="w-14 h-14"
-                        value={value}
-                        text={`${value}%`}
-                        styles={buildStyles({
-                          pathColor: getAccuracyCircleColor(
-                            getColorAccuracy(guess, color)
-                          ),
-                          textSize: 30,
-                          textColor: "black",
-                        })}
-                      />
-                    )}
-                  </ProgressProvider>
-                  {/* <div style={{ width: 50, height: 50 }}>
-                    <CircularProgressbar
-                      value={getColorAccuracy(guess, color)}
-                      text={`${getColorAccuracy(guess, color)}%`}
-                      styles={buildStyles({
-                        pathColor: getAccuracyCircleColor(
-                          getColorAccuracy(guess, color)
-                        ),
-                        textSize: 30,
-                        textColor: "black",
-                      })}
-                    />
-                  </div> */}
+                  <CircularProgressbar
+                    className="w-14 h-14"
+                    value={getColorAccuracy(guess, color)}
+                    text={`${getColorAccuracy(guess, color)}%`}
+                    styles={buildStyles({
+                      pathColor: getAccuracyCircleColor(
+                        getColorAccuracy(guess, color)
+                      ),
+                      textSize: 30,
+                      textColor: "black",
+                    })}
+                  />
                 </div>
                 <button
                   className="bg-black rounded-lg text-lg text-white p-4"
@@ -223,73 +203,4 @@ export default function Home() {
       </div>
     </div>
   );
-}
-
-{
-  /* <div
-  className="flex flex-col gap-4 justify-center items-center w-full h-screen"
-  style={{
-    backgroundColor: targetColor,
-  }}
->
-  <div className="shadow-lg rounded-lg p-8 text-4xl bg-white">
-    #
-    <input
-      size={6}
-      onChange={(e) => {
-        setGuessColor("#" + e.target.value);
-      }}
-    ></input>
-  </div>
-  <button
-    className="bg-black rounded-lg text-lg text-white p-4"
-    onClick={() => setGuessResult(true)}
-  >
-    Guess
-  </button>
-</div>; */
-}
-
-{
-  /* <div className="bg-white p-8 shadow-lg rounded-lg flex flex-col gap-4">
-  <div
-    className={`p-4 rounded-full shadow-lg ${
-      shouldTextBeBlack(guessColor) ? "text-black" : "text-white"
-    }`}
-    style={{
-      backgroundColor: guessColor,
-    }}
-  >
-    Guess {guessColor}
-  </div>
-  <div
-    className={`p-4 rounded-full shadow-lg ${
-      shouldTextBeBlack(targetColor) ? "text-black" : "text-white"
-    }`}
-    style={{
-      backgroundColor: targetColor,
-    }}
-  >
-    Answer {targetColor}
-  </div>
-  <div className="flex gap-2 justify-center items-center text-lg">
-    Accuracy
-    <CircularProgressbar
-      className="w-16 h-16"
-      value={getColorAccuracy(targetColor, guessColor)}
-      text={`${getColorAccuracy(targetColor, guessColor)}%`}
-      styles={buildStyles({
-        pathColor: "limegreen",
-        textColor: "black",
-        textSize: "2rem",
-      })}
-    />
-  </div>
-  <button
-    className="bg-black rounded-lg text-lg text-white p-4"
-    onClick={() => location.reload()}
-  >
-    Play again
-  </button>
-</div>; */
 }
