@@ -6,15 +6,16 @@ interface IProgressProviderProps {
   children: any;
 }
 
-export default function ProgressProvider({
+const ProgressProvider = ({
   valueStart,
   valueEnd,
   children,
-}: IProgressProviderProps) {
+}: IProgressProviderProps) => {
   const [value, setValue] = React.useState(valueStart);
   React.useEffect(() => {
     setValue(valueEnd);
   }, [valueEnd]);
 
   return children(value);
-}
+};
+export default ProgressProvider;

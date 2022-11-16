@@ -178,24 +178,37 @@ export default function Home() {
                 <div className="flex gap-2 justify-center items-center text-lg">
                   Accuracy
                   <ProgressProvider
-                    valueStart={0}
+                    valueStart={10}
                     valueEnd={getColorAccuracy(guess, color)}
                   >
                     {(value: number) => (
                       <CircularProgressbar
-                        className="w-16 h-16"
+                        className="w-14 h-14"
                         value={value}
                         text={`${value}%`}
                         styles={buildStyles({
                           pathColor: getAccuracyCircleColor(
                             getColorAccuracy(guess, color)
                           ),
+                          textSize: 30,
                           textColor: "black",
-                          textSize: "2rem",
                         })}
                       />
                     )}
                   </ProgressProvider>
+                  {/* <div style={{ width: 50, height: 50 }}>
+                    <CircularProgressbar
+                      value={getColorAccuracy(guess, color)}
+                      text={`${getColorAccuracy(guess, color)}%`}
+                      styles={buildStyles({
+                        pathColor: getAccuracyCircleColor(
+                          getColorAccuracy(guess, color)
+                        ),
+                        textSize: 30,
+                        textColor: "black",
+                      })}
+                    />
+                  </div> */}
                 </div>
                 <button
                   className="bg-black rounded-lg text-lg text-white p-4"
