@@ -68,11 +68,7 @@ function getAccuracyCircleColor(accuracy: number): string {
   return "red";
 }
 
-function checkInput(
-  guess: string,
-  setMessages: React.Dispatch<React.SetStateAction<JSX.Element[]>>,
-  messages: JSX.Element[]
-): boolean {
+function checkInput(guess: string): boolean {
   const reg = /^#[0-9A-F]{6}$/i;
   if (reg.test(guess)) {
     return true;
@@ -120,8 +116,7 @@ export default function Home() {
             <button
               className="bg-black rounded-lg text-lg text-white p-4"
               onClick={() => {
-                if (checkInput(guess, messages, setMessages))
-                  setShowAnswer(true);
+                if (checkInput(guess)) setShowAnswer(true);
               }}
             >
               Guess
