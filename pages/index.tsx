@@ -102,8 +102,6 @@ export default function Home() {
 
   return (
     <div>
-      {messages}
-
       <div
         style={{ background: color }}
         className="flex items-center justify-center w-screen h-screen"
