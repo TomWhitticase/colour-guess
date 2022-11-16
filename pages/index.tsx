@@ -63,8 +63,8 @@ function getColorAccuracy(color1: string, color2: string): number {
 }
 
 function getAccuracyCircleColor(accuracy: number): string {
-  if (accuracy > 90) return "limegreen";
-  if (accuracy > 70) return "orange";
+  if (accuracy >= 90) return "limegreen";
+  if (accuracy >= 70) return "orange";
   return "red";
 }
 
@@ -74,27 +74,17 @@ function checkInput(guess: string): boolean {
     return true;
   }
   alert("Input a valid hex code");
-  // let newMessages: JSX.Element[] = messages;
-  // newMessages.push(<Message key={Math.random()} message={"input error"} />);
-  // setMessages(newMessages);
   return false;
 }
 
 export default function Home() {
-  const [elements, setElements] = useState([<div></div>]);
   const [showAnswer, setShowAnswer] = useState(false);
   const [guess, setGuess] = useState("");
-  const [messages, setMessages] = useState([]);
 
   const [color, setColor] = useState("");
   useEffect(() => {
     setColor(getRandomColor());
   }, []);
-
-  function showResult() {
-    console.log("test");
-    setShowAnswer(true);
-  }
 
   return (
     <div>
