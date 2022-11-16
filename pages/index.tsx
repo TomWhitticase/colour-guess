@@ -1,9 +1,11 @@
 import { AnyRecordWithTtl } from "dns";
+import { motion } from "framer-motion";
 import { HTMLAttributes, useEffect, useMemo, useState } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ProgressProvider from "./components/ProgressProvider";
 
 const inputError = () =>
   toast.error("Enter a valid hex code!", {
@@ -113,74 +115,96 @@ export default function Home() {
         className="flex items-center justify-center w-screen h-screen"
       >
         {!showAnswer && (
-          <div key={0} className="flex flex-col gap-4">
-            <div className="shadow-lg rounded-lg p-8 text-4xl bg-white">
-              #
-              <input
-                size={6}
-                onChange={(e) => {
-                  setGuess("#" + e.target.value);
-                }}
-              ></input>
-            </div>
-            <button
-              className="bg-black rounded-lg text-lg text-white p-4"
-              onClick={() => {
-                if (checkInput(guess)) setShowAnswer(true);
-              }}
-            >
-              Guess
-            </button>
-          </div>
-        )}
-        {showAnswer && (
-          <>
-            <div
-              key={1}
-              className="bg-white p-8 shadow-lg rounded-lg flex flex-col gap-4"
-            >
-              <div
-                className={`p-4 rounded-full shadow-lg ${
-                  shouldTextBeBlack(guess) ? "text-black" : "text-white"
-                }`}
-                style={{
-                  backgroundColor: guess,
-                }}
-              >
-                Guess {guess}
-              </div>
-              <div
-                className={`p-4 rounded-full shadow-lg ${
-                  shouldTextBeBlack(color) ? "text-black" : "text-white"
-                }`}
-                style={{
-                  backgroundColor: color,
-                }}
-              >
-                Answer {color}
-              </div>
-              <div className="flex gap-2 justify-center items-center text-lg">
-                Accuracy
-                <CircularProgressbar
-                  className="w-16 h-16"
-                  value={getColorAccuracy(guess, color)}
-                  text={`${getColorAccuracy(guess, color)}%`}
-                  styles={buildStyles({
-                    pathColor: getAccuracyCircleColor(
-                      getColorAccuracy(guess, color)
-                    ),
-                    textColor: "black",
-                    textSize: "2rem",
-                  })}
-                />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div key={0} className="flex flex-col gap-4">
+              <div className="shadow-lg rounded-lg p-8 text-4xl bg-white">
+                #
+                <input
+                  size={6}
+                  onChange={(e) => {
+                    setGuess("#" + e.target.value);
+                  }}
+                ></input>
               </div>
               <button
                 className="bg-black rounded-lg text-lg text-white p-4"
-                onClick={() => location.reload()}
+                onClick={() => {
+                  if (checkInput(guess)) setShowAnswer(true);
+                }}
               >
-                Play again
+                Guess
               </button>
             </div>
+          </motion.div>
+        )}
+        {showAnswer && (
+          <>
+            <motion.div
+              initial={{
+                opacity: 0,
+                scale: 0.5,
+              }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div
+                key={1}
+                className="bg-white p-8 shadow-lg rounded-lg flex flex-col gap-4"
+              >
+                <div
+                  className={`p-4 rounded-full shadow-lg ${
+                    shouldTextBeBlack(guess) ? "text-black" : "text-white"
+                  }`}
+                  style={{
+                    backgroundColor: guess,
+                  }}
+                >
+                  Guess {guess}
+                </div>
+                <div
+                  className={`p-4 rounded-full shadow-lg ${
+                    shouldTextBeBlack(color) ? "text-black" : "text-white"
+                  }`}
+                  style={{
+                    backgroundColor: color,
+                  }}
+                >
+                  Answer {color}
+                </div>
+                <div className="flex gap-2 justify-center items-center text-lg">
+                  Accuracy
+                  <ProgressProvider
+                    valueStart={0}
+                    valueEnd={getColorAccuracy(guess, color)}
+                  >
+                    {(value: number) => (
+                      <CircularProgressbar
+                        className="w-16 h-16"
+                        value={value}
+                        text={`${value}%`}
+                        styles={buildStyles({
+                          pathColor: getAccuracyCircleColor(
+                            getColorAccuracy(guess, color)
+                          ),
+                          textColor: "black",
+                          textSize: "2rem",
+                        })}
+                      />
+                    )}
+                  </ProgressProvider>
+                </div>
+                <button
+                  className="bg-black rounded-lg text-lg text-white p-4"
+                  onClick={() => location.reload()}
+                >
+                  Play again
+                </button>
+              </div>
+            </motion.div>
           </>
         )}
       </div>
