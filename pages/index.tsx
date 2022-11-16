@@ -2,7 +2,20 @@ import { AnyRecordWithTtl } from "dns";
 import { HTMLAttributes, useEffect, useMemo, useState } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import Message from "./components/Message";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const inputError = () =>
+  toast.error("Enter a valid hex code!", {
+    position: "top-center",
+    autoClose: 5000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
 
 function shouldTextBeBlack(backgroundcolor: string): boolean {
   function computeLuminence(backgroundcolor: string): number {
@@ -78,7 +91,7 @@ function checkInput(guess: string): boolean {
   if (reg.test(guess)) {
     return true;
   }
-  alert("Input a valid hex code");
+  inputError();
   return false;
 }
 
@@ -93,6 +106,8 @@ export default function Home() {
 
   return (
     <div>
+      <ToastContainer />
+
       <div
         style={{ background: color }}
         className="flex items-center justify-center w-screen h-screen"
