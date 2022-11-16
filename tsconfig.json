@@ -19,7 +19,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "pages/components/ProgressProvider.jsx"
+    "pages/components/ProgressProvider.tsx"
   ],
   "exclude": ["node_modules"]
 }
