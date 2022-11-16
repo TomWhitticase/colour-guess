@@ -58,7 +58,6 @@ function getRandomColor(): string {
 
 function getColorAccuracy(color1: string, color2: string): number {
   const hexToDec = (hex: string) => parseInt(hex, 16);
-
   const rgb1 = [
     hexToDec(color1.substring(1, 3)),
     hexToDec(color1.substring(3, 5)),
@@ -69,15 +68,12 @@ function getColorAccuracy(color1: string, color2: string): number {
     hexToDec(color2.substring(3, 5)),
     hexToDec(color2.substring(5, 7)),
   ];
-
   const differences = [
     1 - Math.abs(rgb1[0] - rgb2[0]) / 255,
     1 - Math.abs(rgb1[1] - rgb2[1]) / 255,
     1 - Math.abs(rgb1[2] - rgb2[2]) / 255,
   ];
-
   const accuracy = (differences[0] + differences[1] + differences[2]) / 3;
-
   return Math.round(accuracy * 100);
 }
 
@@ -108,7 +104,6 @@ export default function Home() {
   return (
     <div>
       <ToastContainer />
-
       <div
         style={{ background: color }}
         className="flex items-center justify-center w-screen h-screen"
