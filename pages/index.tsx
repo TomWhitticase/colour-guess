@@ -5,6 +5,7 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 const inputError = () =>
   toast.error("Enter a valid hex code!", {
@@ -92,6 +93,34 @@ function checkInput(guess: string): boolean {
   return false;
 }
 
+function getArrows(color: string, guess: string) {
+  const hexToDec = (hex: string) => parseInt(hex, 16);
+  const rgb1 = [
+    hexToDec(color.substring(1, 3)),
+    hexToDec(color.substring(3, 5)),
+    hexToDec(color.substring(5, 7)),
+  ];
+  const rgb2 = [
+    hexToDec(guess.substring(1, 3)),
+    hexToDec(guess.substring(3, 5)),
+    hexToDec(guess.substring(5, 7)),
+  ];
+  const arrows = [rgb1[0] < rgb2[0], rgb1[1] < rgb2[1], rgb1[2] < rgb2[2]];
+  return (
+    <div className="flex gap-2 justify-center items-center">
+      <span className="flex items-center text-red-500">
+        R{arrows[0] ? <FaArrowDown /> : <FaArrowUp />}
+      </span>
+      <span className="flex items-center text-green-500">
+        G{arrows[1] ? <FaArrowDown /> : <FaArrowUp />}
+      </span>
+      <span className="flex items-center text-blue-500">
+        B{arrows[2] ? <FaArrowDown /> : <FaArrowUp />}
+      </span>
+    </div>
+  );
+}
+
 export default function Home() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [guess, setGuess] = useState("");
@@ -106,7 +135,7 @@ export default function Home() {
       <ToastContainer />
       <div
         style={{ background: color }}
-        className="flex items-center justify-center w-screen h-screen"
+        className="flex flex-col items-center justify-center w-screen h-screen"
       >
         {!showAnswer && (
           <motion.div
@@ -170,6 +199,7 @@ export default function Home() {
                 >
                   Answer {color}
                 </div>
+                <div>{getArrows(color, guess)}</div>
                 <div className="flex gap-2 justify-center items-center text-lg">
                   Accuracy
                   <CircularProgressbar
@@ -195,6 +225,15 @@ export default function Home() {
             </motion.div>
           </>
         )}
+        <a
+          href="https://www.tomwhitticase.com"
+          // className={`underline fixed bottom-4 ${
+          //   shouldTextBeBlack(color) ? "text-black" : "text-white"
+          // }`}
+          className={"underline fixed bottom-4 text-white"}
+        >
+          Made by Tom Whitticase
+        </a>
       </div>
     </div>
   );
